@@ -27,6 +27,7 @@ sbatch -n 2 mpiexec_docker my_image ./task
 ```
 
 ## Getting Started ##
-1. Install and configure Docker or Podman on the cluster, Podman is better for rootless
-2. Install a inotifywait util. It is available in inotify-tools pkg in CentOS 7 (EPEL) or similar
+On all hosts:
+1. Install and configure Docker or Podman, Podman is better for rootless
+2. Install an inotifywait util. It is available in inotify-tools pkg on Ubuntu and CentOS (in EPEL repo)
 3. Copy scripts from the _bin_ directory to any directory in your PATH
