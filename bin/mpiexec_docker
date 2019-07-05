@@ -7,7 +7,7 @@ shift
 UTILS_DIR="$(dirname "$(which run_on_host.sh)")"
 HOST_GW="$(mktemp /tmp/host_cmd.XXXXXX)"
 HOST_RET="$(mktemp /tmp/host_ret.XXXXXX)"
-trap "rm -f $SRUN_GW $SRUN_RET" EXIT
+trap "rm -f $HOST_GW $HOST_RET" EXIT
 
 (inotifywait -qq $HOST_GW -e close_write && sh $HOST_GW; echo $? > $HOST_RET) &
 
