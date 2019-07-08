@@ -57,7 +57,7 @@ Podman has two killer-features which makes it recommended:
 
 When the _mpiexec_docker_ runs a program on a single node the things are straightforward. It calls docker run, passing a set of parameters:
 
-- current directory is maped as /root in the container
+- current directory is maped as /host in the container
 - MPI-specific environment variables are passed inside the container
 - if InfiniBand devices are detected, they are also passed inside the container
 

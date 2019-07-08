@@ -2,18 +2,30 @@
 
 unset XDG_RUNTIME_DIR
 export IMAGE=$1
+if [ -z $IMAGE ]; then
+    echo "Usage: mpiexec_docker.sh <image> [args...]" >&2; exit 1
+fi
 shift
+
+FILES_NEEDED="run_on_host.sh mpiexec_choose.sh run_in_docker.sh"
+if ! which $FILES_NEEDED &>/dev/null; then
+    PATH="$(dirname "${BASH_SOURCE[0]}"):$PATH"
+    if ! which $FILES_NEEDED &>/dev/null; then
+        echo "The dir with $FILES_NEEDED files should be in PATH" >&2; exit 1
+    fi
+fi
 
 UTILS_DIR="$(dirname "$(which run_on_host.sh)")"
 HOST_GW="$(mktemp /tmp/host_cmd.XXXXXX)"
 HOST_RET="$(mktemp /tmp/host_ret.XXXXXX)"
 trap "rm -f $HOST_GW $HOST_RET" EXIT
 
-(inotifywait -qq $HOST_GW -e close_write && sh $HOST_GW; echo $? > $HOST_RET) &
+(inotifywait -qq $HOST_GW -e close_write && (sh $HOST_GW; echo $? > $HOST_RET)) &
 
-ARGS="--network host -w /root/ --rm -e IMAGE -e I_MPI_HYDRA_BOOTSTRAP=slurm"
+ARGS="--network host -w /host/ --rm -e IMAGE -e I_MPI_HYDRA_BOOTSTRAP=slurm"
 ARGS="$ARGS -e MV2_SMP_USE_CMA=0 -e OMPI_MCA_btl_vader_single_copy_mechanism=3"
 ARGS="$ARGS -v $UTILS_DIR/run_on_host.sh:/usr/bin/srun"
+#ARGS="$ARGS -v $UTILS_DIR/run_on_host.sh:/usr/bin/ssh"
 ARGS="$ARGS -v $UTILS_DIR/mpiexec_choose.sh:/usr/bin/mpiexec_choose.sh"
 ARGS="$ARGS -v $HOST_GW:/tmp/host_cmd -v $HOST_RET:/tmp/host_ret"
 
@@ -25,4 +37,4 @@ for env in $(printenv | grep -P '^(OMPI|OPAL|SLURMD?|MV2)_' | cut -d= -f 1); do
     ARGS="$ARGS -e $env"
 done
 
-docker run -i -v "$(pwd):/root/" $ARGS "$IMAGE" mpiexec_choose.sh "$@"
+docker run -i -v "$(pwd):/host/" $ARGS "$IMAGE" mpiexec_choose.sh "$@"
