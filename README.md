@@ -13,18 +13,22 @@ The distributed programs can be executed on HPC clusters. We pay attention to th
 ## Usage
 Usually, MPI programs are started like this: 
 ```bash
-mpiexec -np 2 ./task
+mpiexec -np 2 /root/hello
 ```
 
 With `mpiexec_docker` it looks similar:
 ```bash
-mpiexec_docker my_image -np 2 ./task
+mpiexec_docker alexbers/mpiexec-docker-example:ex0 -np 2 /root/hello
 ```
+
+The image will be downloaded automatically.
 
 On a cluster with Slurm the programs can be started this way:
 ```bash
-sbatch -n 2 mpiexec_docker my_image ./task
+sbatch -n 2 mpiexec_docker alexbers/mpiexec-docker-example:ex0 /root/hello
 ```
+
+More examples are in the */examples* dir.
 
 ## Getting Started
 On all hosts:
@@ -44,8 +48,6 @@ RUN yum install -y openmpi openmpi-dev gcc
 ENV PATH /usr/lib64/openmpi/bin:/usr/bin:/bin
 ENV LD_LIBRARY_PATH /usr/lib64/openmpi/lib
 ```
-
-More examples are in the */examples* dir.
 
 ## Docker vs Podman
 

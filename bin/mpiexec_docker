@@ -9,7 +9,7 @@ shift
 
 FILES_NEEDED="run_on_host.sh mpiexec_choose.sh run_in_docker.sh"
 if ! which $FILES_NEEDED &>/dev/null; then
-    PATH="$(dirname "${BASH_SOURCE[0]}"):$PATH"
+    PATH="$(realpath "$(dirname "${BASH_SOURCE[0]}")"):$PATH"
     if ! which $FILES_NEEDED &>/dev/null; then
         echo "The dir with $FILES_NEEDED files should be in PATH" >&2; exit 1
     fi
