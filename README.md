@@ -61,12 +61,9 @@ When the _mpiexec_docker_ runs a program on a single node the things are straigh
 
 - current directory is maped as /host in the container
 - MPI-specific environment variables are passed inside the container
-- if InfiniBand devices are detected, they are also passed inside the container
+- if InfiniBand devices are detected, they are also passed inside the container. Other devices like GPUs are also passed.
 
-However there are two things to keep in mind:
-
-- old Open MPI refuse to run as the root user unless --allow-run-as-root argument is specified. The container engine maps the current user to the root using namespaces, actually not giving him additional rights. Open MPI not able to see this. To solve this problem the _mpiexec_choose.sh_ is mapped into container and launched instead of the original mpiexec. This scripts detects Open MPI and adds the option if it is needed
-- some MPI implementations try to copy memory between tasks using so called Cross Memory Attach technology. It requires ptrace privilegy, which is not given by default. To solve the problem, this technology is disabled with passing *MV2_SMP_USE_CMA* and *OMPI_MCA_btl_vader_single_copy_mechanism* environment variables. An alternative way is to add --privileged arg to the *docker run* to give more privileges to the container
+However there are one thing to keep in mind: old Open MPI refuse to run as the root user unless --allow-run-as-root argument is specified. The container engine maps the current user to the root using namespaces, actually not giving him additional rights. Open MPI not able to see this. To solve this problem the _mpiexec_choose.sh_ is mapped into container and launched instead of the original mpiexec. This scripts detects Open MPI and adds the option if it is needed
 
 The distributed task launch is more tricky. The mpiexec calls programs like *ssh* for remote launching. However, if it detect slurm-specific environment variables, it calls *srun* instead. But srun, if installed, needs to authenticate on slurm controller, which usually done with munge daemon. 
 
@@ -76,3 +73,4 @@ The program on the remote host should be launched in the container. The *run_on_
 
 The *mpiexec_docker* can be integrated with workload managers by mapping *run_on_host.sh* to the desired program path, e.g. */usr/bin/ssh*.
 
+**Important: by design, the mpi launch inside the container is no more secure than without the container.**

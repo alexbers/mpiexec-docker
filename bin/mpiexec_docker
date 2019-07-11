@@ -22,16 +22,12 @@ trap "rm -f $HOST_GW $HOST_RET" EXIT
 
 (inotifywait -qq $HOST_GW -e close_write && (sh $HOST_GW; echo $? > $HOST_RET)) &
 
-ARGS="--network host -w /host/ --rm -e IMAGE -e I_MPI_HYDRA_BOOTSTRAP=slurm"
-ARGS="$ARGS -e MV2_SMP_USE_CMA=0 -e OMPI_MCA_btl_vader_single_copy_mechanism=3"
+ARGS="--privileged --network host -w /host/ --rm"
+ARGS="$ARGS -v /dev/:/dev/ -v $HOST_GW:/tmp/host_cmd -v $HOST_RET:/tmp/host_ret"
 ARGS="$ARGS -v $UTILS_DIR/run_on_host.sh:/usr/bin/srun"
 ARGS="$ARGS -v $UTILS_DIR/run_on_host.sh:/usr/bin/ssh"
 ARGS="$ARGS -v $UTILS_DIR/mpiexec_choose.sh:/usr/bin/mpiexec_choose.sh"
-ARGS="$ARGS -v $HOST_GW:/tmp/host_cmd -v $HOST_RET:/tmp/host_ret"
-
-if [ -c /dev/infiniband/rdma_cm -a -c /dev/infiniband/uverbs0 ]; then
-    ARGS="$ARGS --device /dev/infiniband/rdma_cm --device /dev/infiniband/uverbs0"
-fi
+ARGS="$ARGS -e IMAGE -e I_MPI_HYDRA_BOOTSTRAP=slurm"
 
 for env in $(printenv | grep -P '^(OMPI|OPAL|SLURMD?|MV2)_' | cut -d= -f 1); do
     ARGS="$ARGS -e $env"
