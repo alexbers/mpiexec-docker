@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd /l_mklb_p_2018.3.011/benchmarks_2018/linux/mkl/benchmarks/linpack/
+exec ./runme_xeon64

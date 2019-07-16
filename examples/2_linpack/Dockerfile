@@ -1,6 +1,7 @@
 FROM centos:7
-RUN yum install -y mvapich23
-ENV PATH /usr/lib64/mvapich23/bin:/l_mklb_p_2019.4.003/benchmarks_2019/linux/mkl/benchmarks/mp_linpack/:/usr/bin:/bin
+RUN yum install -y mvapich23 numactl
+ENV PATH /usr/lib64/mvapich23/bin:/usr/bin:/bin
 ENV LD_LIBRARY_PATH /usr/lib64/mvapich23/lib
-ADD https://software.intel.com/sites/default/files/managed/ee/cd/l_mklb_p_2019.4.003.tgz /
-RUN tar xf /l_mklb_p_2019.4.003.tgz
+ADD http://registrationcenter-download.intel.com/akdlm/irc_nas/9752/l_mklb_p_2018.3.011.tgz /
+COPY exp1 /bin/
+RUN tar xf /l_mklb_p_2018.3.011.tgz
