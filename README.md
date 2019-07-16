@@ -18,14 +18,14 @@ mpiexec -np 2 /root/hello
 
 With `mpiexec_docker` it looks similar:
 ```bash
-mpiexec_docker alexbers/mpiexec-docker-example:ex0 -np 2 /root/hello
+mpiexec_docker alexbers/mpiexec-docker-example:exp0 -np 2 /root/hello
 ```
 
 The image will be downloaded automatically.
 
 If Slurm is used on a cluster, the programs can be started this way:
 ```bash
-sbatch -n 2 mpiexec_docker alexbers/mpiexec-docker-example:ex0 /root/hello
+sbatch -n 2 mpiexec_docker alexbers/mpiexec-docker-example:exp0 /root/hello
 ```
 
 More examples are in the */examples* dir.
@@ -73,4 +73,4 @@ The program on the remote host should be launched in the container. The *run_on_
 
 The *mpiexec_docker* can be integrated with workload managers by mapping *run_on_host.sh* to the desired program path, e.g. */usr/bin/ssh*.
 
-**Important: by design, the MPI launch inside the container is no more secure than without the container.** The project focuses on the reproducibility and performance instead of an additional security.
+**Important: by design, the MPI launch inside the container is no more secure than without the container.** The project focuses on the reproducibility and performance instead of providing an additional security.
